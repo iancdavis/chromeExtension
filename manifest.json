@@ -1,0 +1,11 @@
+{
+    "name": "Movie Recommender",
+    "version": "1.0.0",
+    "description": "Recommend a movie based on the weather",
+    "manifest_version": 3,
+    "author" : "Yohan and Ian",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Recommend a Movie"
+    }
+}
