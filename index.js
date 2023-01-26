@@ -17,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-
     function obtainLocation(userGavePermission){
         if ('geolocation' in navigator && userGavePermission) {
             /* geolocation is available */
@@ -108,24 +106,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const movies = document.querySelector('#movie-list');
             
             // movie rating
-            const movieRatingDisplay = document.createElement('h2');
-            const movieRating = moviesData[rnd].vote_average;
-            movieRatingDisplay.innerText = `${movieRating}/10`;
-            
-            // poster
-            const poster = document.createElement('img')
-            const posterLink = `https://image.tmdb.org/t/p/w500/${moviesData[rnd].poster_path}`
-            poster.setAttribute('src', posterLink)
-    
-            // title
-            const titleDisplay = document.createElement('h1');
-            const title = moviesData[rnd].original_title;
-            titleDisplay.innerText = title;
-    
-            // movie description
-            const descriptionDisplay = document.createElement('p');
-            const description = moviesData[rnd].overview;
-            descriptionDisplay.innerText = description;
+            function paintCanvasWithSelectedMovie (finalMovieIndex){
+                const movieRatingDisplay = document.createElement('h2');
+                const movieRating = moviesData[finalMovieIndex].vote_average;
+                movieRatingDisplay.innerText = `${movieRating}/10`;
+                
+                // poster
+                const poster = document.createElement('img')
+                const posterLink = `https://image.tmdb.org/t/p/w500/${moviesData[finalMovieIndex].poster_path}`
+                poster.setAttribute('src', posterLink)
+        
+                // title
+                const titleDisplay = document.createElement('h1');
+                const title = moviesData[finalMovieIndex].original_title;
+                titleDisplay.innerText = title;
+        
+                // movie description
+                const descriptionDisplay = document.createElement('p');
+                const description = moviesData[finalMovieIndex].overview;
+                descriptionDisplay.innerText = description;
+
+                // append all info
+                movies.appendChild(poster);
+                movies.appendChild(titleDisplay);
+                movies.appendChild(movieRatingDisplay);
+                movies.appendChild(descriptionDisplay);
+            }
 
             const genreConverter = [
                 {
@@ -206,31 +212,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             ]
 
-            // convert genre array
-            const genreArrayNums = moviesData[rnd].genre_ids;
-            genreArrayNums.map(el=>{
-                for (let i = 0; i<genreConverter.length; i++){
-                    if (genreConverter[i].id===el){
-                        el = genreConverter[i].name;
+            // which weather === which genre?
+            const matchMovie = {
+                "Rain" : "Comedy",
+                "Sunny" : "Action",
+                "Fog" : "Drama",
+                "Clear" : "Adventure",
+                "Snow" : "Science Fiction",
+                "Cloudy" : "Mystery"
+            }
+
+            // reroll "dice" until movie genre matches weather genre
+            function movieMatcher (matchMovie, movie = moviesData[rnd], weatherArray) {
+                let rnd1 = rnd
+                console.log(matchMovie);
+                console.log(movie);
+                // convert genre array
+                let genreArrayNums = movie.genre_ids;
+                genreArrayNums = genreArrayNums.map(el=>{
+                    for (let i = 0; i<genreConverter.length; i++){
+                        if (genreConverter[i].id===el){
+                            el = genreConverter[i].name;
+                        }
+                    }
+                    return el;
+                })
+                console.log(genreArrayNums);
+                console.log(weatherArray);
+                for (let i = 0; i < weatherArray.length; i++){
+
+                    //base case
+                    if (genreArrayNums.includes(matchMovie[weatherArray[i]])){
+                        return rnd1;
+                    } else {
+                        rnd1 = Math.floor(Math.random()*20)
+                        return movieMatcher(matchMovie, moviesData[rnd1], weatherArray);
                     }
                 }
-                return el;
-            })
-            
-            console.log(genreArrayNums);
-            
-            // append all info
-            movies.appendChild(poster);
-            movies.appendChild(titleDisplay);
-            movies.appendChild(movieRatingDisplay);
-            movies.appendChild(descriptionDisplay);
+            }
+
+            const newValue = movieMatcher(matchMovie, moviesData[rnd], weatherArray);
+            paintCanvasWithSelectedMovie(newValue);
             
             
         }).catch(err=>console.error(err));
     }
-
-
-
 })
 
 // api key for movies: f03bf50d13acf4f802dfd5cbb3f2262e
