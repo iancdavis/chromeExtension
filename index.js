@@ -1,6 +1,8 @@
 const startButton = document.querySelector('button');
 
 startButton.addEventListener('click', () => {
+
+
     
     // default location to codesmith venice
     let userLat = 33.989060922556085;
@@ -59,7 +61,7 @@ startButton.addEventListener('click', () => {
             .then(data=>{
                 console.log(data);
 
-                const forecast = data.properties.periods[6].shortForecast;
+                const forecast = data.properties.periods[0].shortForecast;
                 const isItDay = data.properties.periods[0].isDaytime;
 
                 // parse forecast into most impactful word
@@ -77,7 +79,7 @@ startButton.addEventListener('click', () => {
                 console.log(matchedWeather)
                 // console.log(forecast, isItDay);
 
-                movieApiCall(matchedWeather, isItDay)
+                movieApiCall(matchedWeather, forecast, isItDay)
     
             })
     }
@@ -86,7 +88,7 @@ startButton.addEventListener('click', () => {
     
     
     // const movies = document.querySelector('#movie-list');
-    function movieApiCall(weatherArray, isItDay){
+    function movieApiCall(weatherArray, forecast, isItDay){
 
         const rndPage = Math.floor(Math.random() * 3)
         fetch(`https://api.themoviedb.org/3/discover/movie?api_key=f03bf50d13acf4f802dfd5cbb3f2262e&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${rndPage}&with_watch_monetization_types=flatrate`)
@@ -119,16 +121,48 @@ startButton.addEventListener('click', () => {
                 // title
                 const titleDisplay = document.createElement('h1');
                 const title = moviesData[finalMovieIndex].original_title;
-                titleDisplay.innerText = title;
+                titleDisplay.innerText = `We recommend: "${title}"`;
         
                 // movie description
                 const descriptionDisplay = document.createElement('p');
                 const description = moviesData[finalMovieIndex].overview;
                 descriptionDisplay.innerText = description;
 
+                // weather icon
+                // const forecastKeyWords = ['Sunny', 'Rain', 'Fog', 'Clear', 'Snow', 'Cloudy'];
+                let weatherIcon;
+                if (forecast==='Sunny'){
+                    weatherIcon = 'https://www.freeiconspng.com/thumbs/sunny-icon/sunny-icon-2.png';
+                }else if(forecast === 'Rain'){
+                    weatherIcon = "https://www.freeiconspng.com/img/11039";
+                }else if (forecast === 'Fog'){
+                    weatherIcon = "https://www.freeiconspng.com/img/515";
+                }else if (forecast === 'Clear'){
+                    weatherIcon = "https://www.freeiconspng.com/img/23630";
+                }else if (forecast === 'Snow'){
+                    weatherIcon = "https://www.freeiconspng.com/img/31374";
+                } else if (forecast==='Cloudy'){
+                    weatherIcon = "https://www.freeiconspng.com/img/13385";
+                }else {
+                    weatherIcon = "https://www.freeiconspng.com/img/1150";
+                }
+
+                //short weather forecast
+                const shortForecast = document.createElement('h1');
+                const sfContent = forecast;
+                shortForecast.innerHTML = `
+                <span id="weather-span"><p>Based on today's weather:</p><img src=${weatherIcon} class="weather-icon"></img></span>
+                `;
+                // shortForecast.innerText = `Based on today's weather: ${sfContent}`;
+
+                
                 // append all info
+                movies.append(shortForecast);
+                shortForecast.style.borderTop = '1px solid #9499b7';
+                shortForecast.style.paddingTop = "20px";
                 movies.appendChild(poster);
                 movies.appendChild(titleDisplay);
+                titleDisplay.style.textAlign = "center";
                 movies.appendChild(movieRatingDisplay);
                 movies.appendChild(descriptionDisplay);
             }
