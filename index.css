@@ -1,5 +1,4 @@
-/* body div {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-} */
+html{
+    width: 500px;
+    height: 800px;
+}

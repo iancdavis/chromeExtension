@@ -1,39 +1,39 @@
-document.addEventListener('DOMContentLoaded', () => {
+const startButton = document.querySelector('button');
+
+startButton.addEventListener('click', () => {
     
     // default location to codesmith venice
     let userLat = 33.989060922556085;
     let userLong = -118.46904988298537;
 
-    navigator.permissions.query({name:'geolocation'}).then(function(result) {
-        if (result.state == 'granted') {
-            obtainLocation(true);
-        } else if (result.state == 'prompt') {
-            navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
-        } else if (result.state == 'denied') {
-            obtainLocation(false);
-        }
-        result.onchange = function() {
-            report(result.state);
-        }
-    });
+    // navigator.permissions.query({name:'geolocation'}).then(function(result) {
+    //     if (result.state == 'granted') {
+    //         obtainLocation(true);
+    //     // } else if (result.state == 'prompt') {
+    //     //     navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
+    //     } else if (result.state == 'denied') {
+    //         obtainLocation(false);
+    //     }
+    // });
 
-    function obtainLocation(userGavePermission){
-        if ('geolocation' in navigator && userGavePermission) {
-            /* geolocation is available */
-            navigator.geolocation.getCurrentPosition((position) => {
-            userLat = position.coords.latitude;
-            userLong = position.coords.longitude;
+    // function obtainLocation(userGavePermission){
+    //     if ('geolocation' in navigator && userGavePermission) {
+    //         /* geolocation is available */
+    //         navigator.geolocation.getCurrentPosition((position) => {
+    //         userLat = position.coords.latitude;
+    //         userLong = position.coords.longitude;
 
-            // runs the rest of the functions
-            obtainGrid(userLat, userLong);
-            });
-        } else {
-            /* geolocation IS NOT available */
-            console.log('used default location')
-            obtainGrid(userLat, userLong);
-        }
-    }
+    //         // runs the rest of the functions
+    //         obtainGrid(userLat, userLong);
+    //         });
+    //     } else {
+    //         /* geolocation IS NOT available */
+    //         console.log('used default location')
+    //         obtainGrid(userLat, userLong);
+    //     }
+    // }
 
+    obtainGrid(userLat, userLong);
 
     // weather api call
     function obtainGrid (userLat, userLong) {
